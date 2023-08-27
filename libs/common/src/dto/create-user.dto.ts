@@ -1,4 +1,5 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsOptional, IsString } from 'class-validator';
+import { Blog } from 'libs/models/blog.entity';
 
 export class CreateUserDto {
   @IsString()
@@ -10,4 +11,8 @@ export class CreateUserDto {
 
   @IsString()
   password: string;
+
+  @IsArray()
+  @IsOptional()
+  blogs?: Blog[];
 }

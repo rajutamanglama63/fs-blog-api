@@ -8,6 +8,9 @@ export class Blog extends BaseEntity {
   @Column({ name: 'title', type: 'varchar', length: 255 })
   title: string;
 
+  @Column({ name: 'desc', type: 'varchar' })
+  desc: string;
+
   @OneToOne(() => Thumbnail)
   @JoinColumn()
   thumbnail: Thumbnail;

@@ -8,27 +8,56 @@ import { Repository } from 'typeorm';
 export class UserService {
   constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
-  create(newUserData: CreateUserDto) {
-    return this.repo.save(newUserData);
+  create(createUserDto: CreateUserDto) {
+    return this.repo.save(createUserDto);
   }
 
-  findOne(id: number) {
-    return this.repo.findOne({
+  async findOne(id: number) {
+    const user = await this.repo.findOne({
       where: {
         id,
       },
+      relations: {
+        blogs: true,
+      },
     });
+
+    return user;
   }
 
-  find(email: string) {
-    return this.repo.find({
+  async find(email: string) {
+    const users = await this.repo.find({
       where: {
         email,
       },
     });
+
+    return users;
+
+    // if (users) {
+    //   // Create an array of user details without the password field
+    //   const usersWithoutPassword = users.map(
+    //     ({ password, ...userDetails }) => userDetails,
+    //   );
+    //   return usersWithoutPassword;
+    // }
+
+    // return [];
   }
 
-  findAll() {
-    return this.repo.find();
+  async findAll() {
+    const users = await this.repo.find();
+
+    // return users;
+
+    if (users) {
+      // Create an array of user details without the password field
+      const usersWithoutPassword = users.map(
+        ({ password, ...userDetails }) => userDetails,
+      );
+      return usersWithoutPassword;
+    }
+
+    return [];
   }
 }

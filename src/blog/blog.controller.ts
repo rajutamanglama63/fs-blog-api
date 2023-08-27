@@ -7,19 +7,27 @@ import {
   Param,
   Delete,
   UseGuards,
+  Session,
 } from '@nestjs/common';
 import { BlogService } from 'libs/blog/src';
 import { CreateBlogDto } from 'libs/common/src/dto/create-blog.dto';
 import { UpdateBlogDto } from 'libs/common/src/dto/update-blog.dto';
 import { AuthGuard } from 'libs/common/src/guards/auth.guard';
+import { UserService } from 'libs/user/src';
 
 @Controller('blog')
 @UseGuards(AuthGuard)
 export class BlogController {
-  constructor(private readonly blogService: BlogService) {}
+  constructor(
+    private readonly blogService: BlogService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post()
-  create(@Body() createBlogDto: CreateBlogDto) {
+  async create(@Body() createBlogDto: CreateBlogDto, @Session() session: any) {
+    const user = await this.userService.findOne(session.userId);
+
+    createBlogDto.author = user;
     return this.blogService.create(createBlogDto);
   }
 
