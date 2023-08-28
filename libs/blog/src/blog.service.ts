@@ -17,8 +17,17 @@ export class BlogService {
     return `This action returns all post`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findOne(id: number) {
+    const blog = await this.repo.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        thumbnail: true,
+      },
+    });
+
+    return blog;
   }
 
   update(id: number, updateBlogDto: UpdateBlogDto) {
@@ -26,6 +35,6 @@ export class BlogService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} post`;
+    return this.repo.delete(id);
   }
 }

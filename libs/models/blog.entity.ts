@@ -11,7 +11,7 @@ export class Blog extends BaseEntity {
   @Column({ name: 'desc', type: 'varchar' })
   desc: string;
 
-  @OneToOne(() => Thumbnail)
+  @OneToOne(() => Thumbnail, (thumbnail) => thumbnail.blog)
   @JoinColumn()
   thumbnail: Thumbnail;
 
