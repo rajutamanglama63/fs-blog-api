@@ -1,15 +1,21 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { Blog } from 'libs/models/blog.entity';
 
 export class CreateThumbnailDto {
-  @IsString()
-  url: string;
+  file?: any;
 
   @IsString()
-  publicId: string;
+  @IsOptional()
+  url?: string;
+
+  @IsString()
+  @IsOptional()
+  publicId?: string;
 
   @IsNumber()
-  blogId: number;
+  @IsOptional()
+  blogId?: number;
 
-  blog: Blog;
+  @IsOptional()
+  blog?: Blog;
 }
