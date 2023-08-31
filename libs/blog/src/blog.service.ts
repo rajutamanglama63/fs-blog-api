@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBlogDto } from 'libs/common/src/dto/create-blog.dto';
+import { PaginationQueryDto } from 'libs/common/src/dto/pagination-query.dto';
 import { UpdateBlogDto } from 'libs/common/src/dto/update-blog.dto';
 import { Blog } from 'libs/models/blog.entity';
 import { Repository } from 'typeorm';
@@ -13,8 +14,24 @@ export class BlogService {
     return this.repo.save(createBlogDto);
   }
 
-  findAll() {
-    return `This action returns all post`;
+  async findAll(query: PaginationQueryDto) {
+    const { offset, limit } = query || {};
+    const result = await this.repo.findAndCount({
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: {
+        author: true,
+        thumbnail: true,
+      },
+      take: limit ?? 10,
+      skip: offset ?? 0,
+    });
+
+    return {
+      data: result[0] ?? [],
+      total: result[1] ?? 0,
+    };
   }
 
   async findOne(id: number) {

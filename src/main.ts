@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'path';
+import * as cors from 'cors';
 const cookieSession = require('cookie-session');
 
 async function bootstrap() {
@@ -13,6 +14,12 @@ async function bootstrap() {
   app.use(
     cookieSession({
       keys: ['secret'],
+    }),
+  );
+
+  app.use(
+    cors({
+      credentials: true, // Allow cookies and headers to be passed to the frontend
     }),
   );
 

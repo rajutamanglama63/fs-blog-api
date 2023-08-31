@@ -9,16 +9,19 @@ import {
   UseGuards,
   Session,
   Inject,
+  Query,
 } from '@nestjs/common';
 import { BlogService } from 'libs/blog/src';
 import { CreateBlogDto } from 'libs/common/src/dto/create-blog.dto';
+import { PaginationQueryDto } from 'libs/common/src/dto/pagination-query.dto';
 import { UpdateBlogDto } from 'libs/common/src/dto/update-blog.dto';
 import { AuthGuard } from 'libs/common/src/guards/auth.guard';
+import { Blog } from 'libs/models/blog.entity';
 import { ThumbnailService } from 'libs/thumbnail';
 import { UserService } from 'libs/user/src';
 
 @Controller('blog')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class BlogController {
   @Inject(BlogService)
   private readonly blogService: BlogService;
@@ -38,8 +41,10 @@ export class BlogController {
   }
 
   @Get()
-  findAll() {
-    return this.blogService.findAll();
+  findAll(
+    @Query() query: PaginationQueryDto,
+  ): Promise<{ data: Blog[]; total: number }> {
+    return this.blogService.findAll(query);
   }
 
   @Get(':id')
