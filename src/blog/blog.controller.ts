@@ -21,7 +21,7 @@ import { ThumbnailService } from 'libs/thumbnail';
 import { UserService } from 'libs/user/src';
 
 @Controller('blog')
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 export class BlogController {
   @Inject(BlogService)
   private readonly blogService: BlogService;
@@ -43,7 +43,9 @@ export class BlogController {
   @Get()
   findAll(
     @Query() query: PaginationQueryDto,
+    @Session() session: any,
   ): Promise<{ data: Blog[]; total: number }> {
+    console.log('active-user: ', session.userId);
     return this.blogService.findAll(query);
   }
 

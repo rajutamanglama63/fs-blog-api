@@ -12,14 +12,16 @@ async function bootstrap() {
   const port = process.env.PORT ? Number(process.env.PORT) : 4000;
 
   app.use(
-    cookieSession({
-      keys: ['secret'],
+    cors({
+      origin: 'http://localhost:3000',
+      credentials: true, // Allow cookies and headers to be passed to the frontend
     }),
   );
 
   app.use(
-    cors({
-      credentials: true, // Allow cookies and headers to be passed to the frontend
+    cookieSession({
+      keys: ['secret'],
+      name: 'auth',
     }),
   );
 
