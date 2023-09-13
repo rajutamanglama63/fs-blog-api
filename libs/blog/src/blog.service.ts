@@ -34,6 +34,25 @@ export class BlogService {
     };
   }
 
+  async findSearchedBlog(query: PaginationQueryDto) {
+    const { title } = query;
+    console.log('title: ', title);
+
+    // Build your query dynamically based on the title parameter
+    const queryBuilder = this.repo.createQueryBuilder('blog');
+    // .orderBy('blog.createdAt', 'DESC');
+
+    if (title) {
+      queryBuilder.where('blog.title LIKE :title OR blog.desc LIKE :title', {
+        title: `%${title}%`,
+      });
+    }
+
+    const result = await queryBuilder.getMany();
+
+    return result;
+  }
+
   async findOne(id: number) {
     const blog = await this.repo.findOne({
       where: {

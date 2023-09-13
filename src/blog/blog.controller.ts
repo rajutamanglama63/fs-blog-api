@@ -37,6 +37,7 @@ export class BlogController {
     const user = await this.userService.findOne(session.userId);
 
     createBlogDto.author = user;
+    createBlogDto.createdBy = user.fullName;
     return this.blogService.create(createBlogDto);
   }
 
@@ -52,6 +53,11 @@ export class BlogController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.blogService.findOne(+id);
+  }
+
+  @Get('/search')
+  find(@Query() query: PaginationQueryDto) {
+    return this.blogService.findSearchedBlog(query);
   }
 
   @Patch(':id')

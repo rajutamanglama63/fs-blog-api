@@ -17,6 +17,9 @@ export class CreateBlogDto {
   @IsBoolean()
   featured: boolean;
 
+  // @IsString()
+  createdBy: string;
+
   @IsArray()
   tags: string[];
 

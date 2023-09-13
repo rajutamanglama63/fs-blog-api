@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsInt, IsOptional } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export enum OrderEnum {
   ASC = 'ASC',
@@ -20,4 +20,8 @@ export class PaginationQueryDto {
   @IsInt()
   @IsOptional()
   order?: OrderEnum;
+
+  @IsString()
+  @IsOptional()
+  title?: string;
 }
