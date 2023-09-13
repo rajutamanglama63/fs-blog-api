@@ -16,6 +16,9 @@ export class CreateThumbnailDto {
   @IsOptional()
   blogId?: number;
 
+  // @IsOptional()
+  // blog?: Blog;
+
   @IsOptional()
-  blog?: Blog;
+  createdBy?: string
 }

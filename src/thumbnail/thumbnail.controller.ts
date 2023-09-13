@@ -22,6 +22,7 @@ import * as fs from 'fs';
 import { v2 as cloudinary } from 'cloudinary'; // Import cloudinary
 
 import { ConfigService } from '@nestjs/config';
+import { Blog } from 'libs/models/blog.entity';
 const configService = new ConfigService();
 
 @Controller('thumbnail')
@@ -64,10 +65,10 @@ export class ThumbnailController {
     try {
       const tempFilePath = './temp';
 
+
       // Write the Buffer to the temporary file
       fs.writeFileSync(tempFilePath, thumbnailFile.buffer);
 
-      Logger.log('path: ', tempFilePath);
 
       const uploadResult = await cloudinary.uploader.upload(tempFilePath, {
         folder: 'fs-blog-thumbnails', // Specify the folder in Cloudinary
@@ -78,14 +79,17 @@ export class ThumbnailController {
 
       // Now you can use uploadResult.url or any other information
       // from the Cloudinary response to save the URL to your database
-      console.log('Cloudinary upload result:', uploadResult);
 
-      const relatedBlog = await this.blogService.findOne(
+      console.log("blog-id: ", createThumbnailDto.blogId)
+
+      const relatedBlog: any = await this.blogService.findOne(
         createThumbnailDto.blogId,
       );
+
       createThumbnailDto.url = uploadResult.secure_url;
       createThumbnailDto.publicId = uploadResult.public_id;
-      createThumbnailDto.blog = relatedBlog;
+      // createThumbnailDto.blog = relatedBlog;
+      createThumbnailDto.createdBy = relatedBlog.fullName ;
       return this.thumbnailService.create(createThumbnailDto);
     } catch (error) {
       // Handle any error that might occur during the upload

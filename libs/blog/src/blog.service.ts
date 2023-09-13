@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BlogQueryDto } from 'libs/common/src/dto/blog-qurey.dto';
 import { CreateBlogDto } from 'libs/common/src/dto/create-blog.dto';
 import { PaginationQueryDto } from 'libs/common/src/dto/pagination-query.dto';
 import { UpdateBlogDto } from 'libs/common/src/dto/update-blog.dto';
 import { Blog } from 'libs/models/blog.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 @Injectable()
 export class BlogService {
@@ -34,25 +35,33 @@ export class BlogService {
     };
   }
 
-  async findSearchedBlog(query: PaginationQueryDto) {
-    const { title } = query;
-    console.log('title: ', title);
-
-    // Build your query dynamically based on the title parameter
-    const queryBuilder = this.repo.createQueryBuilder('blog');
-    // .orderBy('blog.createdAt', 'DESC');
-
-    if (title) {
-      queryBuilder.where('blog.title LIKE :title OR blog.desc LIKE :title', {
-        title: `%${title}%`,
-      });
+  async findSearchedBlog(query: BlogQueryDto) {
+    const { name, limit, offset } = query ?? {};
+  
+    // Input validation
+    const validatedLimit = Number.isInteger(limit) && limit >= 0 ? limit : 10;
+    const validatedOffset = Number.isInteger(offset) && offset >= 0 ? offset : 0;
+  
+    const searchCriteria: any = {};
+  
+    if (name) {
+      searchCriteria.title = Like(`%${name}%`);
     }
-
-    const result = await queryBuilder.getMany();
-
-    return result;
+  
+    const searchResults = await this.repo.findAndCount({
+      where: searchCriteria,
+      order: {
+        createdAt: 'DESC',
+      },
+      take: validatedLimit,
+      skip: validatedOffset,
+    });
+  
+    return {
+      data: searchResults[0] ?? [],
+      total: searchResults[1] ?? 0,
+    };
   }
-
   async findOne(id: number) {
     const blog = await this.repo.findOne({
       where: {

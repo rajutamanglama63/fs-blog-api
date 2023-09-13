@@ -12,6 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { BlogService } from 'libs/blog/src';
+import { BlogQueryDto } from 'libs/common/src/dto/blog-qurey.dto';
 import { CreateBlogDto } from 'libs/common/src/dto/create-blog.dto';
 import { PaginationQueryDto } from 'libs/common/src/dto/pagination-query.dto';
 import { UpdateBlogDto } from 'libs/common/src/dto/update-blog.dto';
@@ -41,12 +42,18 @@ export class BlogController {
     return this.blogService.create(createBlogDto);
   }
 
+  @Get('search')
+  search(@Query() query: BlogQueryDto): Promise<{ data: Blog[]; total: number }> {
+   
+    return this.blogService.findSearchedBlog(query);
+  }
+
   @Get()
   findAll(
     @Query() query: PaginationQueryDto,
     @Session() session: any,
   ): Promise<{ data: Blog[]; total: number }> {
-    console.log('active-user: ', session.userId);
+    // console.log('active-user: ', session.userId);
     return this.blogService.findAll(query);
   }
 
@@ -55,10 +62,7 @@ export class BlogController {
     return this.blogService.findOne(+id);
   }
 
-  @Get('/search')
-  find(@Query() query: PaginationQueryDto) {
-    return this.blogService.findSearchedBlog(query);
-  }
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {

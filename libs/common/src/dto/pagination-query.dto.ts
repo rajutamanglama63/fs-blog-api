@@ -21,7 +21,5 @@ export class PaginationQueryDto {
   @IsOptional()
   order?: OrderEnum;
 
-  @IsString()
-  @IsOptional()
-  title?: string;
+  
 }
