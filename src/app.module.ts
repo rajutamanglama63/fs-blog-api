@@ -6,7 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database.module';
 import { BlogModule } from './blog/blog.module';
-import { ThumbnailModule } from './thumbnail/thumbnail.module';
+import { UploadFileModule } from './uploadFile/uploadFile.module';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { ThumbnailModule } from './thumbnail/thumbnail.module';
     UserModule,
     AuthModule,
     BlogModule,
-    ThumbnailModule,
+    UploadFileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

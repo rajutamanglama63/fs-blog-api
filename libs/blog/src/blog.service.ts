@@ -23,7 +23,6 @@ export class BlogService {
       },
       relations: {
         author: true,
-        thumbnail: true,
       },
       take: limit ?? 10,
       skip: offset ?? 0,
@@ -37,17 +36,18 @@ export class BlogService {
 
   async findSearchedBlog(query: BlogQueryDto) {
     const { name, limit, offset } = query ?? {};
-  
+
     // Input validation
     const validatedLimit = Number.isInteger(limit) && limit >= 0 ? limit : 10;
-    const validatedOffset = Number.isInteger(offset) && offset >= 0 ? offset : 0;
-  
+    const validatedOffset =
+      Number.isInteger(offset) && offset >= 0 ? offset : 0;
+
     const searchCriteria: any = {};
-  
+
     if (name) {
       searchCriteria.title = Like(`%${name}%`);
     }
-  
+
     const searchResults = await this.repo.findAndCount({
       where: searchCriteria,
       order: {
@@ -56,7 +56,7 @@ export class BlogService {
       take: validatedLimit,
       skip: validatedOffset,
     });
-  
+
     return {
       data: searchResults[0] ?? [],
       total: searchResults[1] ?? 0,
@@ -66,9 +66,6 @@ export class BlogService {
     const blog = await this.repo.findOne({
       where: {
         id,
-      },
-      relations: {
-        thumbnail: true,
       },
     });
 

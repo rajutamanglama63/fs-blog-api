@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
 import { User } from 'libs/models/user.entity';
 
 export class CreateBlogDto {
@@ -12,6 +12,7 @@ export class CreateBlogDto {
   meta: string;
 
   @IsString()
+  @IsOptional()
   slug: string;
 
   @IsBoolean()
@@ -19,6 +20,13 @@ export class CreateBlogDto {
 
   // @IsString()
   createdBy: string;
+
+  @IsString()
+  thumbnail: string;
+
+  @IsString()
+  @IsOptional()
+  image: string;
 
   @IsArray()
   tags: string[];

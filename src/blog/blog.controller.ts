@@ -18,8 +18,8 @@ import { PaginationQueryDto } from 'libs/common/src/dto/pagination-query.dto';
 import { UpdateBlogDto } from 'libs/common/src/dto/update-blog.dto';
 import { AuthGuard } from 'libs/common/src/guards/auth.guard';
 import { Blog } from 'libs/models/blog.entity';
-import { ThumbnailService } from 'libs/thumbnail';
 import { UserService } from 'libs/user/src';
+import slugify from 'slugify';
 
 @Controller('blog')
 @UseGuards(AuthGuard)
@@ -30,21 +30,29 @@ export class BlogController {
   @Inject(UserService)
   private readonly userService: UserService;
 
-  @Inject(ThumbnailService)
-  private readonly thumbnailServive: ThumbnailService;
-
   @Post()
   async create(@Body() createBlogDto: CreateBlogDto, @Session() session: any) {
     const user = await this.userService.findOne(session.userId);
 
+    const newSlug = slugify(`${createBlogDto.title}`, {
+      replacement: '-',
+      remove: undefined,
+      lower: false,
+      strict: false,
+      locale: 'vi',
+      trim: true,
+    });
+
     createBlogDto.author = user;
     createBlogDto.createdBy = user.fullName;
+    createBlogDto.slug = newSlug;
     return this.blogService.create(createBlogDto);
   }
 
   @Get('search')
-  search(@Query() query: BlogQueryDto): Promise<{ data: Blog[]; total: number }> {
-   
+  search(
+    @Query() query: BlogQueryDto,
+  ): Promise<{ data: Blog[]; total: number }> {
     return this.blogService.findSearchedBlog(query);
   }
 
@@ -61,8 +69,6 @@ export class BlogController {
   findOne(@Param('id') id: string) {
     return this.blogService.findOne(+id);
   }
-
-
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
